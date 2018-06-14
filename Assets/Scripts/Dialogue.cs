@@ -31,7 +31,7 @@ public class Dialogue : MonoBehaviour {
 	public Player play;
     public TextMeshProUGUI[] buycoinstext;
 	void Start(){
-		
+        subdialogue.SetActive(true);
 		finishedThePrompt = true;
 		Name = "RED";
 		finishedCurrentTask = true;
@@ -342,13 +342,20 @@ public IEnumerator done(){
 		yield return StartCoroutine(AnimateText (stringToReveal));
 
 	}
-	public void prompt(){
+	public IEnumerator prompt(){
 		selectedOption = 0;
 		taskType = 6;
 		finishedCurrentTask = false;
 		finishedWithTextOverall = false;
 		finishedThePrompt = false;
-
+        while (!finishedThePrompt)
+        {
+            yield return new WaitForSeconds(0.1f);
+            if (finishedThePrompt)
+            {
+                break;
+            }
+        }
 	}
 	public void slots(){
 		selectedOption = 0;

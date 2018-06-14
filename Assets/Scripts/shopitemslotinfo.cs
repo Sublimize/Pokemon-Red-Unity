@@ -92,7 +92,7 @@ public class shopitemslotinfo : MonoBehaviour {
 			intPrice = 1500;
 
 		}
-		slotPriceText.text = intPrice.ToString();
+		slotPriceText.text = "$" + intPrice.ToString();
 
 	}
 }

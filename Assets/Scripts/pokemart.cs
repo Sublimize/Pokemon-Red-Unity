@@ -41,7 +41,8 @@ public class pokemart : MonoBehaviour {
 	public bool alreadyInBag;
 	public bool alreadydidtext;
 	public int keep;
-
+    public int offscreenindexup, offscreenindexdown;
+    public GameObject sellcontent, buycontent;
 
 	public bool withdrawing;
 
@@ -60,8 +61,13 @@ public class pokemart : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-		pricetext.text = fullPrice.ToString ();
-		moneytext.text = play.money.ToString ();
+        if (currentBagPosition == 0)
+        {
+            offscreenindexup = -1;
+            offscreenindexdown = 4;
+        }
+		pricetext.text = "$" + fullPrice.ToString ();
+        moneytext.text = "$" + play.money.ToString ();
 		amountText.text = amountToTask.ToString ();
 		if (currentMenu == quantitymenu) {
 			if (ItemMode == 1) {
@@ -99,24 +105,66 @@ public class pokemart : MonoBehaviour {
 		}
 		if (currentMenu == martwindow) {
 
-			if (Input.GetKeyDown (KeyCode.DownArrow)) {
-				currentBagPosition++;
 
-			}
-			if (Input.GetKeyDown (KeyCode.UpArrow)) {
-				currentBagPosition--;
+            if (Input.GetKeyDown(KeyCode.DownArrow))
+            {
+                currentBagPosition++;
+                if (currentBagPosition == offscreenindexdown && offscreenindexdown != buyrealslots.Count)
+                {
+                    offscreenindexup++;
+                    offscreenindexdown++;
 
-			}
-			if (currentBagPosition < 0) {
-				currentBagPosition = buyrealslots.Count - 1;
+                }
+            }
+            if (Input.GetKeyDown(KeyCode.UpArrow))
+            {
+                currentBagPosition--;
+                if (currentBagPosition == offscreenindexup && offscreenindexup > -1)
+                {
+                    offscreenindexup--;
+                    offscreenindexdown--;
+
+                }
+
+            }
+            if (currentBagPosition < 0)
+            {
+
+                currentBagPosition = buyrealslots.Count - 1;
+                if (offscreenindexdown < 0)
+                {
+                    buycontent.transform.localPosition = new Vector3(0, 16 * (buyrealslots.Count - 4), 0);
+
+                }
+                if (buyrealslots.Count >= 4)
+                {
+                    offscreenindexup = buyrealslots.Count - 5;
+                    offscreenindexdown = buyrealslots.Count;
+                }
+                else
+                {
+                    offscreenindexup = -1;
+                    offscreenindexdown = buyrealslots.Count;
+                }
 
 
-			}
-			if (currentBagPosition ==  buyrealslots.Count) {
-				currentBagPosition = 0;
+            }
+            if (currentBagPosition == buyrealslots.Count)
+            {
+
+                currentBagPosition = 0;
+
+                if (offscreenindexdown == buyrealslots.Count)
+                {
+                    Debug.Log("Set back to 0");
+                    buycontent.transform.localPosition = new Vector3(0, 32, 0);
+                }
 
 
-			}
+                offscreenindexup = -1;
+                offscreenindexdown = 4;
+            }
+            buycontent.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 16 * (offscreenindexup + 1));
 
 
 
@@ -167,25 +215,66 @@ public class pokemart : MonoBehaviour {
 		}
 		if (currentMenu == itemwindow) {
 
-			if (Input.GetKeyDown (KeyCode.DownArrow)) {
-				currentBagPosition++;
 
-			}
-			if (Input.GetKeyDown (KeyCode.UpArrow)) {
-				currentBagPosition--;
+            if (Input.GetKeyDown(KeyCode.DownArrow))
+            {
+                currentBagPosition++;
+                if (currentBagPosition == offscreenindexdown && offscreenindexdown != realslots.Count)
+                {
+                    offscreenindexup++;
+                    offscreenindexdown++;
 
-			}
-			if (currentBagPosition < 0) {
-				currentBagPosition = realslots.Count - 1;
+                }
+            }
+            if (Input.GetKeyDown(KeyCode.UpArrow))
+            {
+                currentBagPosition--;
+                if (currentBagPosition == offscreenindexup && offscreenindexup > -1)
+                {
+                    offscreenindexup--;
+                    offscreenindexdown--;
+
+                }
+
+            }
+            if (currentBagPosition < 0)
+            {
+
+                currentBagPosition = realslots.Count - 1;
+                if (offscreenindexdown < 0)
+                {
+                    sellcontent.transform.localPosition = new Vector3(0, 16 * (realslots.Count - 4), 0);
+
+                }
+                if (realslots.Count >= 4)
+                {
+                    offscreenindexup = realslots.Count - 5;
+                    offscreenindexdown = realslots.Count;
+                }
+                else
+                {
+                    offscreenindexup = -1;
+                    offscreenindexdown = realslots.Count;
+                }
 
 
-			}
-			if (currentBagPosition == realslots.Count) {
-				currentBagPosition = 0;
+            }
+            if (currentBagPosition == realslots.Count)
+            {
+
+                currentBagPosition = 0;
+
+                if (offscreenindexdown == realslots.Count)
+                {
+                    Debug.Log("Set back to 0");
+                    sellcontent.transform.localPosition = new Vector3(0, 32, 0);
+                }
 
 
-			}
-
+                offscreenindexup = -1;
+                offscreenindexdown = 4;
+            }
+            sellcontent.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 16 * (offscreenindexup + 1));
 
 
 			for (int i = 0; i < 20; i++) {

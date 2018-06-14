@@ -34,7 +34,8 @@ public class pc : MonoBehaviour  {
 	public bool alreadydidtext;
 
 	public bool withdrawing;
-
+    public int offscreenindexup, offscreenindexdown;
+    public GameObject content;
 
 	void Start() {
 		
@@ -57,6 +58,11 @@ public class pc : MonoBehaviour  {
 	}
 	// Update is called once per frame
 	void Update () {
+        if (currentBagPosition == 0)
+        {
+            offscreenindexup = -1;
+            offscreenindexdown = 4;
+        }
 		amountText.text = amountToTask.ToString ();
 		if (currentMenu == quantitymenu) {
 			
@@ -78,24 +84,66 @@ public class pc : MonoBehaviour  {
 
 		}
 		if (currentMenu == itemwindow) {
-			if (Input.GetKeyDown (KeyCode.DownArrow)) {
-				currentBagPosition++;
+            if (Input.GetKeyDown(KeyCode.DownArrow))
+            {
+                currentBagPosition++;
+                if (currentBagPosition == offscreenindexdown && offscreenindexdown != realslots.Count)
+                {
+                    offscreenindexup++;
+                    offscreenindexdown++;
 
-			}
-			if (Input.GetKeyDown (KeyCode.UpArrow)) {
-				currentBagPosition--;
+                }
+            }
+            if (Input.GetKeyDown(KeyCode.UpArrow))
+            {
+                currentBagPosition--;
+                if (currentBagPosition == offscreenindexup && offscreenindexup > -1)
+                {
+                    offscreenindexup--;
+                    offscreenindexdown--;
 
-			}
-			if (currentBagPosition < 0) {
-				currentBagPosition = realslots.Count - 1;
+                }
+
+            }
+            if (currentBagPosition < 0)
+            {
+
+                currentBagPosition = realslots.Count - 1;
+                if (offscreenindexdown < 0)
+                {
+                    content.transform.localPosition = new Vector3(0, 16 * (realslots.Count - 4), 0);
+
+                }
+                if (realslots.Count >= 4)
+                {
+                    offscreenindexup = realslots.Count - 5;
+                    offscreenindexdown = realslots.Count;
+                }
+                else
+                {
+                    offscreenindexup = -1;
+                    offscreenindexdown = realslots.Count;
+                }
 
 
-			}
-			if (currentBagPosition == realslots.Count) {
-				currentBagPosition = 0;
+            }
+            if (currentBagPosition == realslots.Count)
+            {
+
+                currentBagPosition = 0;
+
+                if (offscreenindexdown == realslots.Count)
+                {
+                    Debug.Log("Set back to 0");
+                    content.transform.localPosition = new Vector3(0, 32, 0);
+                }
 
 
-			}
+                offscreenindexup = -1;
+                offscreenindexdown = 4;
+            }
+            content.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 16 * (offscreenindexup + 1));
+
 
 			if (ItemMode == 2) {
 
@@ -329,7 +377,7 @@ public class pc : MonoBehaviour  {
 
 						}
 						if (selectedOption == 3) {
-
+                            play.overrideRenable = false;
 							mylog.Deactivate ();
 							mylog.finishedWithTextOverall = true;
 							play.PCactive = false;
@@ -370,7 +418,7 @@ public class pc : MonoBehaviour  {
 		}
 		if (Input.GetKeyDown (KeyCode.X)) {
 			if (currentMenu == mainwindow) {
-				
+                play.overrideRenable = false;
 				mylog.Deactivate ();
 				play.PCactive = false;
 				mylog.finishedWithTextOverall = true;

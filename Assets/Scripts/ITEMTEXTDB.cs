@@ -59,14 +59,7 @@ public class ITEMTEXTDB : MonoBehaviour {
 			if (play.coins > 0) {
 				yield return StartCoroutine(mylog.text ("A slot machine!"));
 				yield return StartCoroutine(mylog.line ("Want to play?"));
-				mylog.prompt ();
-				while (!mylog.finishedThePrompt) {
-					yield return new WaitForSeconds (0.1f);
-					if (mylog.finishedThePrompt) {
-						break;
-
-					}
-				}
+                yield return StartCoroutine(mylog.prompt ());
 				if (mylog.selectedOption == 0) {
 					mylog.Deactivate ();
 					play.disabled = true;
@@ -100,6 +93,7 @@ public class ITEMTEXTDB : MonoBehaviour {
 
 	IEnumerator Text2(){
 		Debug.Log("Turning on PC.");
+        play.overrideRenable = true;
 		mylog.Deactivate ();
 		mylog.cantscroll = false;
 		mylog.finishedWithTextOverall = true;
@@ -205,15 +199,7 @@ IEnumerator Text5()
 		yield return StartCoroutine(mylog.line("coins to buy",0));
 		yield return StartCoroutine(mylog.cont("this BIKE VOUCHER!",1));
 		yield return StartCoroutine(mylog.para("Interested?"));
-		mylog.prompt();
-		while (!mylog.finishedThePrompt)
-		{
-			yield return new WaitForSeconds(0.1f);
-			if (mylog.finishedThePrompt)
-			{
-				break;
-			}
-		}
+        yield return StartCoroutine(mylog.prompt());
 		if (mylog.selectedOption == 0)
 		{
 

@@ -1,12 +1,12 @@
-WebGL
+OSXStandalone
 PlayerPath?
-/Users/thatrs/Documents/PokemonRedWebGL
+/Users/thatrs/Documents/pokebuild.app
 SceneListBegin?
 Assets/pok3.unity
 SceneListEnd?
 75cd0c6c744b9733ef29aa6c59ece2b1 Assembly-CSharp.dll:TMPro.Examples.VertexZoom
 c906602d9b43cc5e075f80e1d8ae7c79 Assembly-CSharp.dll:TMPro.Examples.Benchmark01_UGUI
-7db746c9e7f3c00de9568064a7ab74fa Assembly-CSharp.dll:.pc
+c5ab9ca3ed2fba53bcebd260e74ea520 Assembly-CSharp.dll:.pc
 05524b8f659e7bfe5756d1335fec24ba UnityEngine.Timeline.dll:UnityEngine.Timeline.ActivationPlayableAsset
 cf455f7a806648c6ed4c7d3e3f8a0e03 UnityEngine.Timeline.dll:UnityEngine.Timeline.ActivationTrack
 13bdb7c23815c33a33b37b0ba8dd39be UnityEngine.Timeline.dll:UnityEngine.Timeline.AnimationPlayableAsset
@@ -88,7 +88,7 @@ f61c0793411f10cf5fbfa1473fef5ef2 UnityEngine.UI.dll:UnityEngine.UI.ToggleGroup
 86d36c43c53541d667100dc90b89cfba UnityEngine.UI.dll:UnityEngine.EventSystems.TouchInputModule
 1b8c02d0aa82fbf036a2b9b2d713eec3 UnityEngine.UI.dll:UnityEngine.UI.VerticalLayoutGroup
 6a492d7b8465b2c00d15794caa46ec2e Assembly-CSharp.dll:TMPro.Examples.TMPro_InstructionOverlay
-a03fb9b40ff799bde2eda152dab4a8f9 Assembly-CSharp.dll:.pokemart
+281b9d5603876727741f601e74a8789f Assembly-CSharp.dll:.pokemart
 765037da3d8faeee91e39d672b924c61 Assembly-CSharp.dll:.EnvMapAnimator
 81a1600aed29b2c0975ea40c4e64c77d Assembly-CSharp.dll:.itemslotinformation
 d6702a4ac67014af30667c4d0c84edf3 Assembly-CSharp.dll:.pokemonstats
@@ -122,7 +122,7 @@ e9bdabf9265d758d56f01bb188916fa8 UnityEngine.Networking.dll:UnityEngine.Networki
 528ea1fd7c01796fc60c4e2f172ea229 UnityEngine.Networking.dll:UnityEngine.Networking.NetworkTransformVisualizer
 63c78063f1fba3db463c4c55b40103cc Assembly-CSharp.dll:.AnimatedTile
 9de3a22eca9aefadba2d10d5987cefe3 UnityEngine.SpatialTracking.dll:UnityEngine.SpatialTracking.TrackedPoseDriver
-381da4d81694c83acd549a43ce23bc02 Assembly-CSharp.dll:.Player
+f8a2857bcc70eb19b9580bdd5e1a7bc0 Assembly-CSharp.dll:.Player
 3cec46facae45921257202a20c50db64 Assembly-CSharp.dll:TMPro.Examples.WarpTextExample
 f4bd1aee67eeef7953cce6c44588b3d7 TextMeshPro-2017.3-1.0.56-Runtime.dll:TMPro.TextContainer
 8e879b98cad4aa17a0beef746daecd35 TextMeshPro-2017.3-1.0.56-Runtime.dll:TMPro.TextMeshPro
@@ -155,7 +155,7 @@ a0d1f0afd404491d406255cbcda695a9 Assembly-CSharp.dll:.MainMenu
 50a0fa002cfc67638c87a901e46b763e Assembly-CSharp.dll:TMPro.Examples.TMP_TextSelector_B
 da3b7e39abf409afce7ebef937282ba7 Assembly-CSharp.dll:.CreditsHandler
 020550babdb991365f61c5bffe1f4f52 Assembly-CSharp.dll:TMPro.Examples.Benchmark03
-fc162c8c912fbf1a6d86ee1d28d3dde2 Assembly-CSharp.dll:.bag
+1b3583e35735e87ee88d807deb3aac12 Assembly-CSharp.dll:.bag
 deed3503105a45616d88f017d40daacc Assembly-CSharp.dll:.tm_prices
 b9332c0eee630779376843b5343eb250 Assembly-CSharp.dll:TMPro.Examples.TMP_TextInfoDebugTool
 f4bd1aee67eeef7953cce6c44588b3d7 TextMeshPro-2017.3-1.0.56-Runtime.dll:TMPro.TextContainer

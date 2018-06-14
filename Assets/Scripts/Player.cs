@@ -19,8 +19,9 @@ public class Player : MonoBehaviour {
 	public ITEMTEXTDB IDB;
 	public GameObject fameoak;
 	public  bool canInteractAgain;
+    public bool overrideRenable;
 	public bool disabled, PCactive;
-	public RaycastHit2D itemCheck;
+	public RaycastHit2D itemCheck, facingcheck;
 	public bool startmenuup;
 	public GameObject startmenu;
 	public int money;
@@ -34,6 +35,9 @@ public class Player : MonoBehaviour {
 	public MainMenu moon;
 	public bool shopup;
 	public ViewBio BIO;
+    public bool actuallymoving;
+    public bool ledgejumping;
+    public GameObject facedtile;
 	//1 up, 2down, 3 left, 4 right
 	public bool cannotMoveLeft, cannotMoveRight, cannotMoveUp, cannotMoveDown;
 
@@ -51,68 +55,192 @@ public class Player : MonoBehaviour {
 		tr = transform;
 	}
 	public void Warp (Vector2 position){
-		
+        actuallymoving = false;
 		transform.localPosition = position;
 		pos = tr.position;
+        disabled = true;
+        WaitToInteract();
+
 	}
-	void FixedUpdate()
+    IEnumerator LedgeJump(){
+
+        playerAnim.SetBool("ledgejumping", ledgejumping);
+        pos += direction == 2 ? new Vector3(0, -2, 0) : direction == 3 ? new Vector3(-2, 0, 0) : new Vector3(2, 0, 0);
+        transform.position = Vector3.MoveTowards(transform.position, pos, Time.fixedDeltaTime * 4);
+        disabled = true;
+        while(tr.position != pos){
+            yield return new WaitForSeconds(0.001f);
+            transform.position = Vector3.MoveTowards(transform.position, pos, Time.fixedDeltaTime * 4);
+            if (tr.position == pos) break;
+        }
+        ledgejumping = false;
+        facedtile = null;
+        playerAnim.SetBool("ledgejumping", ledgejumping);
+        WaitToInteract(0.2f);
+
+
+
+    }
+    void FixedUpdate()
 	{
-		
+        switch(walkSurfBikeState){
+            case 0: 
+                speed = 4f;
+                break;
+            case 1:
+                speed = 8f;
+                break;
+            case 2:
+                speed = 4f;
+                break;
+                
 
-		if (dia.finishedWithTextOverall && !disabled && !startmenuup && !shopup && !inBattle) {
-			if (Input.GetKey (KeyCode.UpArrow)) {
-				direction = 1;
-				moving = true;
+        }
 
-				if (tr.position == pos && !cannotMoveUp) {
-					pos += (Vector3.up);
-				}
-			} else if (Input.GetKey (KeyCode.RightArrow)) {
-				direction = 4;
-				moving = true;
-				if (tr.position == pos && !cannotMoveRight) {
-					
-					pos += (Vector3.right);
-				}
+        if (dia.finishedWithTextOverall && !disabled && !startmenuup && !shopup && !inBattle)
+        {
+            //If we're not ledge jumping already, the adjacent tile is a ledge, and we're exactly on a tile, ledge jump
+            if (Input.GetKey(KeyCode.DownArrow) && !disabled && !ledgejumping && facedtile != null && facedtile.tag == "LedgeDown" && tr.position == pos && direction == 2){
+                ledgejumping = true;
+                direction = 2;
+                playerAnim.SetFloat("movedir", direction);
+                StartCoroutine(LedgeJump());
 
-			} else if (Input.GetKey (KeyCode.DownArrow)) {
-				direction = 2;
-				moving = true;
-				if (tr.position == pos && !cannotMoveDown) {
-					
-					pos += (Vector3.down);
-				}
-			} else if (Input.GetKey (KeyCode.LeftArrow)) {
-				direction = 3;
-				moving = true;
-				if (tr.position == pos && !cannotMoveLeft) {
-					
-					pos += (Vector3.left);
-				}
-			}
-
-			transform.position = Vector3.MoveTowards (transform.position, pos, Time.deltaTime * speed);
-			if (moving)
-			{
-				if (tr.position == pos)
-				{
-					if(!walkedfromwarp)
-					walkedfromwarp = true;
-				}
-
-			}
-			if (tr.position == pos)
-			moving = false;
-		if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow))
-			moving = true;
-		if (tr.position != pos)
-			moving = true;
-		playerAnim.SetFloat("movingfloat", moving? 1 : 0);
-		playerAnim.SetFloat("movedir", direction);
-
-		}
+            }
+            if (Input.GetKey(KeyCode.LeftArrow) && !disabled && !ledgejumping && facedtile != null  && facedtile.tag == "LedgeLeft" && tr.position == pos && direction == 3)
+            {
+                ledgejumping = true;
+                direction = 3;
+                playerAnim.SetFloat("movedir", direction);
+                StartCoroutine(LedgeJump());
 
 
+            }
+            if (Input.GetKey(KeyCode.RightArrow) && !disabled && !ledgejumping && facedtile != null  && facedtile.tag == "LedgeRight" && tr.position == pos && direction == 4)
+            {
+                ledgejumping = true;
+                direction = 4;
+                playerAnim.SetFloat("movedir", direction);
+                StartCoroutine(LedgeJump());
+
+
+            }
+            if (!ledgejumping)
+            {
+                
+                if (actuallymoving)
+                {
+                    if (tr.position == pos)
+                    {
+                        if (!walkedfromwarp)
+                            walkedfromwarp = true;
+                    }
+
+                }
+                if (Input.GetKey(KeyCode.UpArrow))
+                {
+                    if (actuallymoving && tr.position == pos)
+                    {
+                        walkedfromwarp = true;
+                    }
+                    direction = 1;
+                    moving = true;
+                    if (tr.position == pos)
+                        playerAnim.SetFloat("movedir", direction);
+                    if (tr.position == pos && !cannotMoveUp)
+                    {
+                        pos += (Vector3.up);
+                        actuallymoving = true;
+                    }
+                    else if (cannotMoveUp)
+                    {
+                        actuallymoving = false;
+                    }
+
+                }
+                else if (Input.GetKey(KeyCode.RightArrow))
+                {
+                    if (actuallymoving && tr.position == pos)
+                    {
+                        walkedfromwarp = true;
+                    }
+                    direction = 4;
+                    moving = true;
+                    if (tr.position == pos)
+                        playerAnim.SetFloat("movedir", direction);
+                    if (tr.position == pos && !cannotMoveRight)
+                    {
+
+                        pos += (Vector3.right);
+                        actuallymoving = true;
+                    }
+                    else if (cannotMoveRight)
+                    {
+                        actuallymoving = false;
+                    }
+
+                }
+                else if (Input.GetKey(KeyCode.DownArrow))
+                {
+                    if (actuallymoving && tr.position == pos)
+                    {
+                        walkedfromwarp = true;
+                    }
+                    direction = 2;
+
+                    moving = true;
+                    if (tr.position == pos)
+                        playerAnim.SetFloat("movedir", direction);
+                    if (tr.position == pos && !cannotMoveDown)
+                    {
+
+                        pos += (Vector3.down);
+                        actuallymoving = true;
+                    }
+                    else if (cannotMoveDown)
+                    {
+                        actuallymoving = false;
+                    }
+                }
+                else if (Input.GetKey(KeyCode.LeftArrow))
+                {
+                    if (actuallymoving && tr.position == pos)
+                    {
+                        walkedfromwarp = true;
+                    }
+                    direction = 3;
+                    moving = true;
+                    if (tr.position == pos)
+                        playerAnim.SetFloat("movedir", direction);
+                    if (tr.position == pos && !cannotMoveLeft)
+                    {
+
+                        pos += (Vector3.left);
+                        actuallymoving = true;
+                    }
+                    else if (cannotMoveLeft)
+                    {
+                        actuallymoving = false;
+                    }
+                }
+                else if (tr.position == pos) actuallymoving = false;
+
+                transform.position = Vector3.MoveTowards(transform.position, pos, Time.fixedDeltaTime * speed);
+
+                if (tr.position == pos)
+                    moving = false;
+                if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow))
+                    moving = true;
+                if (tr.position != pos)
+                    moving = true;
+
+                playerAnim.SetFloat("movingfloat", moving ? 1 : 0);
+                if (tr.position == pos)
+                    playerAnim.SetFloat("movedir", direction);
+
+            }
+
+        }
 	}
 	public IEnumerator MovePlayerOneTile(int direction){
 		manuallyWalking = true;
@@ -206,6 +334,7 @@ public class Player : MonoBehaviour {
 */
 	}
 	void Update () {
+       
 		playerAnim.SetFloat("walkbikesurfstate", walkSurfBikeState);
 		if (BIO.bioscreen.enabled) {
 
@@ -240,34 +369,47 @@ public class Player : MonoBehaviour {
 				transform.localPosition = new Vector3 (Mathf.Round (transform.localPosition.x), Mathf.Round (transform.localPosition.y), 0);
 				pos = tr.position;
 			}
-	
-
-			
-
-			
 
 
+
+
+           
+           
 
 			if (direction == 1) {
 
 				itemCheck = Physics2D.Raycast (transform.position, Vector2.up, 8, ItemMask );
+                facingcheck = Physics2D.Raycast(transform.position, Vector2.up, 8, CollisionMask);
 			}
 			if (direction == 2) {
 
 				itemCheck =	Physics2D.Raycast (transform.position, Vector2.down, 8, ItemMask);
+                facingcheck = Physics2D.Raycast(transform.position, Vector2.down, 8, CollisionMask);
 			}
 			if (direction == 3) {
 				itemCheck = Physics2D.Raycast (transform.position, Vector2.left, 8, ItemMask);
+                facingcheck = Physics2D.Raycast(transform.position, Vector2.left, 8, CollisionMask);
 
 			}
 			if (direction == 4) {
 
 				itemCheck =	Physics2D.Raycast (transform.position, Vector2.right, 8, ItemMask);
+                facingcheck = Physics2D.Raycast(transform.position, Vector2.right, 8, CollisionMask);
 			}
+            if (facingcheck.collider != null)
+            {
+                if (tr.position == pos && facingcheck.distance - .5f < 0.01f)
+                {
+                    facedtile = facingcheck.collider.gameObject;
+                }
+                else facedtile = null;
+            }
+            else facedtile = null;
+
 			if (itemCheck.collider != null) {
 				//print (itemCheck.distance.ToString ());
-				if (itemCheck.distance <= .5f && !moving) {
-
+				if (itemCheck.distance - .5f < 0.01f && !moving) {
+                    
 					if (!moving && canInteractAgain && !PCactive && !shopup && !disabled && dia.finishedWithTextOverall && !startmenuup && !inBattle && !moving) {
 						if (itemCheck.collider.tag.Contains("Interact") && !itemCheck.collider.tag.Contains("Player")) {
 							if (Input.GetKeyDown (KeyCode.Z)) {
@@ -308,8 +450,9 @@ public class Player : MonoBehaviour {
 				}
 
 			}
-			CheckCollision ();
+			//Check collision here?
 		}
+        CheckCollision();
 
 	}
 
@@ -317,10 +460,19 @@ public class Player : MonoBehaviour {
 		Invoke ("ReenableInteracting", .1f);
 
 	}
+    public void WaitToInteract(float time)
+    {
+        disabled = true;
+        Invoke("ReenableInteracting", time);
+
+    }
 
 	void ReenableInteracting(){
-		canInteractAgain = true;
-		disabled = false;
+        if (!overrideRenable)
+        {
+            canInteractAgain = true;
+            disabled = false;
+        }
 	}
 	public IEnumerator DisplayEmotiveBubble(int type){
 		disabled = true;
@@ -331,8 +483,7 @@ public class Player : MonoBehaviour {
 		emotionbubble.enabled = false;
 		displayingEmotion = false;
 
-		disabled = false;
-
+        disabled = false;
 
 
 	}
@@ -344,7 +495,7 @@ public class Player : MonoBehaviour {
 
 		if (upCheck.collider != null) {
 			
-			if (upCheck.collider.tag.Contains ("WallObject")) {
+            if (upCheck.collider.tag.Contains ("WallObject") || upCheck.collider.tag.Contains("Ledge")) {
 				//print (upCheck.distance);
 				if (upCheck.distance <= 1) {
 					cannotMoveUp = true;
@@ -361,7 +512,7 @@ public class Player : MonoBehaviour {
 		}
 		if (downCheck.collider != null) {
 			
-			if (downCheck.collider.tag.Contains ("WallObject")) {
+            if (downCheck.collider.tag.Contains ("WallObject") || downCheck.collider.tag.Contains("Ledge")) {
 				//print (downCheck.distance);
 				if (downCheck.distance <= 1) {
 					cannotMoveDown = true;
@@ -378,7 +529,7 @@ public class Player : MonoBehaviour {
 		}
 		if (leftCheck.collider != null) {
 			
-			if (leftCheck.collider.tag.Contains ("WallObject")) {
+            if (leftCheck.collider.tag.Contains ("WallObject") || leftCheck.collider.tag.Contains("Ledge")) {
 				//print (leftCheck.distance);
 				if (leftCheck.distance <= 1) {
 					cannotMoveLeft = true;
@@ -395,7 +546,7 @@ public class Player : MonoBehaviour {
 		}
 		if (rightCheck.collider != null) {
 			
-			if (rightCheck.collider.tag.Contains ("WallObject")) {
+            if (rightCheck.collider.tag.Contains ("WallObject") || rightCheck.collider.tag.Contains("Ledge")) {
 				//print (rightCheck.distance);
 				if (rightCheck.distance <= 1) {
 					cannotMoveRight = true;

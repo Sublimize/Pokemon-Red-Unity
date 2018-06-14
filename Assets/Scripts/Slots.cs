@@ -516,14 +516,7 @@ public class Slots : MonoBehaviour {
 			}
 			
 		yield return StartCoroutine(mylog.para ("One more go?"));
-			mylog.prompt ();
-			while (!mylog.finishedThePrompt) {
-				yield return new WaitForSeconds (0.1f);
-				if (mylog.finishedThePrompt) {
-					break;
-
-				}
-			}
+        yield return StartCoroutine(mylog.prompt ());
 			if (mylog.selectedOption == 0) {
 				canroll = false;
 			yield return StartCoroutine(mylog.text ("Bet how many"));

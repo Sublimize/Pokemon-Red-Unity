@@ -8,6 +8,11 @@ TagManager:
   - WallObjectInteract
   - Interact
   - WallObjectPlayer
+  - LedgeDown
+  - LedgeLeft
+  - LedgeRight
+  - TallGrass
+  - Water
   layers:
   - Default
   - TransparentFX
@@ -21,9 +26,9 @@ TagManager:
   - IgnoreInCollision
   - IgnoreNPC
   - IgnorePlayer
-  - 
-  - 
-  - 
+  - MapEditor
+  - Interactable
+  - InteractCol
   - 
   - 
   - 

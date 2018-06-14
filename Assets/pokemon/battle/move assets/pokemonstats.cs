@@ -31,6 +31,8 @@ public class pokemonstats : MonoBehaviour {
 	public void StartBattle(int battleID, int battleType){
 		play.inBattle = true;
 		play.disabled = true;
+        play.overrideRenable = true;
+        Debug.Log(play.disabled);
 		battlemenu.SetActive (true);
 		bm.battleoverlay.sprite  = bm.blank;
 		bm.Initialize ();

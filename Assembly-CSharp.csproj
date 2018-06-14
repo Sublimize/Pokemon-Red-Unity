@@ -78,6 +78,7 @@
     <Compile Include="Assets\Scripts\itemslotinformation.cs" />
     <Compile Include="Assets\Scripts\ITEMTEXTDB.cs" />
     <Compile Include="Assets\Scripts\MainMenu.cs" />
+    <Compile Include="Assets\Scripts\MapEditor.cs" />
     <Compile Include="Assets\Scripts\MinecraftMapColorCode.cs" />
     <Compile Include="Assets\Scripts\MonLearnYesNo.cs" />
     <Compile Include="Assets\Scripts\NameSelection.cs" />
@@ -92,6 +93,7 @@
     <Compile Include="Assets\Scripts\resize.cs" />
     <Compile Include="Assets\Scripts\shopitemslotinfo.cs" />
     <Compile Include="Assets\Scripts\Slots.cs" />
+    <Compile Include="Assets\Scripts\TallGrass.cs" />
     <Compile Include="Assets\Scripts\TileWarp.cs" />
     <Compile Include="Assets\Scripts\title.cs" />
     <Compile Include="Assets\Scripts\tm_prices.cs" />

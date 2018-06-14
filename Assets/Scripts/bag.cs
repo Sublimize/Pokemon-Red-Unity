@@ -7,7 +7,7 @@ public class bag : MonoBehaviour  {
 	
 	public GameObject currentMenu;
 	public GameObject cursor;
-	public GameObject usetossmenu, itemwindow,   quantitymenu;
+	public GameObject usetossmenu, itemwindow,   quantitymenu, content;
 	public GameObject[] menuSlots, itemSelectSlots;
 	public Dialogue mylog;
 	public Player play;
@@ -36,7 +36,7 @@ public class bag : MonoBehaviour  {
 	public bool alreadydidtext;
 	public MainMenu moon;
 	public int keep;
-
+    public int offscreenindexup, offscreenindexdown;
 
 	public bool withdrawing;
 
@@ -65,20 +65,60 @@ public class bag : MonoBehaviour  {
 
 
 	
-	public void UseItem(string whatItem){
-		play.startmenuup = false;
+	public IEnumerator UseItem(string whatItem){
+        
 		if (whatItem == "BIKE VOUCHER") {
 
 			play.Warp (new Vector2(16, -5));
 
 		}
+        if (whatItem == "BICYCLE")
+        {
+            
+            if (play.walkSurfBikeState == 0)
+            {
+                yield return StartCoroutine(mylog.text(mylog.Name + " got on the BICYCLE!"));
+                yield return StartCoroutine(mylog.done());
+                play.walkSurfBikeState = 1;
+                goto disable;
+            }
+            if (play.walkSurfBikeState == 1)
+            {
+                yield return StartCoroutine(mylog.text(mylog.Name + " got off the BICYCLE!"));
+                yield return StartCoroutine(mylog.done());
+                play.walkSurfBikeState = 0;
+            }
+            disable:
+                currentMenu = itemwindow;
+                play.startmenuup = false;
+                moon.selectedOption = 0;
+                moon.currentmenu = null;
+                moon.gameObject.SetActive(false);
+                this.gameObject.SetActive(false);
+                play.WaitToInteract(0.3f);
+
+
+
+
+        }
+
 
 
 	}
-	// Update is called once per frame
-	void Update () {
+    // Update is called once per frame
+    private void Update()
+    {
+        StartCoroutine(MainUpdate());
+    }
+    IEnumerator  MainUpdate () {
+        if(currentBagPosition == 0){
+            offscreenindexup = -1;
+            offscreenindexdown = 3;
+        }
+
+
 		amountText.text = amountToTask.ToString ();
-		if (currentMenu == quantitymenu) {
+        if (currentMenu == quantitymenu && mylog.finishedCurrentTask) {
 			
 			if (Input.GetKeyDown (KeyCode.DownArrow)) {
 				amountToTask--;
@@ -97,27 +137,50 @@ public class bag : MonoBehaviour  {
 
 
 		}
-		if (currentMenu == itemwindow) {
+        if (currentMenu == itemwindow && mylog.finishedCurrentTask) {
 
 			if (Input.GetKeyDown (KeyCode.DownArrow)) {
 				currentBagPosition++;
-
+                if(currentBagPosition == offscreenindexdown && offscreenindexdown != realslots.Count){
+                    offscreenindexup++;
+                    offscreenindexdown++;
+                    content.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 16 * (offscreenindexup + 1));
+                }
 			}
 			if (Input.GetKeyDown (KeyCode.UpArrow)) {
 				currentBagPosition--;
+                if (currentBagPosition == offscreenindexup && offscreenindexup > -1)
+                {
+                    offscreenindexup--;
+                    offscreenindexdown--;
+                    content.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 16 * (offscreenindexup + 1));
+                }
 
 			}
 			if (currentBagPosition < 0) {
-				currentBagPosition = realslots.Count - 1;
+               
+				currentBagPosition = 0;
+                if (offscreenindexdown < 0)
+                {
+                    
+
+                }
+               
 
 
 			}
 			if (currentBagPosition == realslots.Count) {
-				currentBagPosition = 0;
+                
+				currentBagPosition = realslots.Count - 1;
 
+                if (offscreenindexdown == realslots.Count)
+                {
+                                
+                }
 
 			}
-
+            if (currentBagPosition < 0) currentBagPosition = 0;
+           
 
 
 			for (int i = 0; i < 20; i++) {
@@ -160,7 +223,6 @@ public class bag : MonoBehaviour  {
 
 			didFirstRunthrough = true;
 			itemSelectSlots = new GameObject[realslots.Count];
-
 			for (int i = 0; i < realslots.Count; i++) {
 
 				itemSelectSlots [i] = realslots [i].transform.GetChild (0).gameObject;
@@ -187,7 +249,7 @@ public class bag : MonoBehaviour  {
 
 				menuSlots [i] = currentMenu.transform.GetChild (i).gameObject;
 			}
-			if (currentMenu == usetossmenu) {
+            if (currentMenu == usetossmenu && mylog.finishedCurrentTask) {
 				cursor.transform.position = menuSlots [selectedOption].transform.position;
 
 				cursor.SetActive (true);
@@ -209,7 +271,7 @@ public class bag : MonoBehaviour  {
 			}
 		
 		}
-		if (Input.GetKeyDown (KeyCode.RightShift)) {
+        if (Input.GetKeyDown (KeyCode.RightShift) && mylog.finishedCurrentTask && currentBagPosition != realslots.Count - 1) {
 			if (selectBag == -1) {
 				selectBag = currentBagPosition;
 			} else {
@@ -269,13 +331,8 @@ public class bag : MonoBehaviour  {
 						if (selectedOption == 0) {
 							if (realslots.Count > 1) {
 								ItemMode1 ();
-								UseItem (id.itemslots [currentBagPosition]);
-								currentMenu = itemwindow;
-
-								moon.selectedOption = 0;
-								moon.currentmenu = null;
-								moon.gameObject.SetActive (false);
-								this.gameObject.SetActive (false);
+                                StartCoroutine(UseItem (id.itemslots [currentBagPosition]));
+								
 							}
 
 
@@ -310,7 +367,18 @@ public class bag : MonoBehaviour  {
 						if (ItemMode == 2) {
 						
 							if (!Items [currentBagPosition].GetComponent<itemslotinformation> ().isKeyItem) {
-								StartCoroutine (TossItem ());
+                                yield return StartCoroutine(mylog.text("Is it OK to toss " + Items[currentBagPosition].GetComponent<itemslotinformation>().Name + "?"));
+                                yield return StartCoroutine(mylog.prompt());
+                                if(mylog.selectedOption == 0){
+                                    yield return StartCoroutine(mylog.text("Tossed " + Items[currentBagPosition].GetComponent<itemslotinformation>().Name + "."));
+                                    yield return StartCoroutine(mylog.done());
+                                    StartCoroutine(TossItem());
+
+                                }else{
+                                    mylog.Deactivate();
+                                    currentMenu = itemwindow;
+                                }
+								
 							} else {
 								StartCoroutine (TooImportantToToss ());
 							

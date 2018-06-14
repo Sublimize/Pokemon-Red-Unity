@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class itemData : MonoBehaviour {
 	public bool hasText,  onlyonce, triggered;
-	public int TextID, ITEMID, coinamount; 
+	public int TextID, coinamount;
+    public string itemName;
 	// Use this for initialization
 	void Start () {
 		

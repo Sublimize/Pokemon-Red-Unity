@@ -1,27 +1,51 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+public class itemdatabase : MonoBehaviour
+{
+    //both share the same index;
+    //for items
+    public List<string> itemslots = new List<string>(20);
+    public List<int> quantity = new List<int>(20);
+    public List<bool> KeyItem = new List<bool>(20);
+    //for PC
+    public List<string> PCslots = new List<string>(50);
+    public List<int> PCquantity = new List<int>(50);
+    public List<bool> PCKeyItem = new List<bool>(50);
+    public pc lc;
+    public List<string> ViridianItems = new List<string>(5);
+    public List<string> PewterItems = new List<string>(7);
+    public List<string> CeruleanItems = new List<string>(8);
+    public List<string> VermilionItems = new List<string>(6);
+    public List<string> LavenderItems = new List<string>(9);
+    public List<string> SaffronItems = new List<string>(6);
+    public List<string> FuchsiaItems = new List<string>(7);
+    public List<string> CinnabarItems = new List<string>(7);
+    public List<string> IndigoItems = new List<string>(7);
 
-public class itemdatabase : MonoBehaviour {
-	//both share the same index;
-	//for items
-	public List<string> itemslots =  new List<string>(20);
-	public List<int> quantity =  new List<int>(20);
-	public List<bool> KeyItem = new List<bool> (20);
-	//for PC
-	public List<string> PCslots =  new List<string>(50);
-	public List<int> PCquantity =  new List<int>(50);
-	public List<bool> PCKeyItem = new List<bool> (50);
-	public pc lc;
-	public List<string> ViridianItems = new List<string> (5);
-	public List<string> PewterItems = new List<string> (7);
-	public List<string> CeruleanItems = new List<string> (8);
-	public List<string> VermilionItems = new List<string> (6);
-	public List<string> LavenderItems = new List<string> (9);
-	public List<string> SaffronItems = new List<string> (6);
-	public List<string> FuchsiaItems = new List<string> (7);
-	public List<string> CinnabarItems = new List<string> (7);
-	public List<string> IndigoItems = new List<string> (7);
+    public string[] keyitems = {
+        "BIKE VOUCHER",
+        "BICYCLE",
+        "HELIX FOSSIL",
+        "DOME FOSSIL",
+        "CARD KEY",
+        "COIN CASE",
+        "EXP. ALL",
+        "GOLD TEETH",
+        "GOOD ROD",
+        "ITEMFINDER",
+        "LIFT KEY",
+        "OAK'S PARCEL",
+        "OLD AMBER",
+        "OLD ROD",
+        "POKEFLUTE",
+        "POKEDEX",
+        "S.S. TICKET",
+        "SECRET KEY",
+        "SILPH SCOPE",
+        "SUPER ROD",
+        "TOWN MAP" 
+    };
 	// Use this for initialization
 	void Start () {
 		
@@ -123,7 +147,7 @@ public class itemdatabase : MonoBehaviour {
 	IEnumerator check1(){
 		for (int i = 0; i < 20; i++) {
 			if (itemslots [i] != "null") {
-				if (itemslots[i] == "BIKE VOUCHER") {
+                if (System.Array.IndexOf(keyitems, itemslots[i]) > -1) {
 					if (quantity[i] != 1) {
 						KeyItem[i] = true;
 						quantity[i] = 1;
@@ -179,7 +203,7 @@ public class itemdatabase : MonoBehaviour {
 	IEnumerator check3(){
 		for (int i = 0; i < 50; i++) {
 			if (PCslots [i] != "null") {
-				if (PCslots[i] == "BIKE VOUCHER") {
+                if (System.Array.IndexOf(keyitems, PCslots[i]) > -1) {
 					if (PCquantity[i] != 1) {
 						PCKeyItem[i] = true;
 					PCquantity[i] = 1;
