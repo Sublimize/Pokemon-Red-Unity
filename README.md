@@ -1,6 +1,8 @@
 # Pokemon-Red-Unity
 Recreation of Pokemon Red in Unity
+
 Main resources/references used:
+
 Dissassembly: https://github.com/pret/pokered
 
 Gameboy Architecture Manual(for the assembly code): http://marc.rawer.de/Gameboy/Docs/GBCPUman.pdf
